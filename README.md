@@ -43,31 +43,35 @@ you call scripts manually or edit the path entries in the helper-scripts
 xxx_all.sh
 
 
-project (your project root folder - here named project)
-|
-+- CorpusAnalyser (this should be this project from github)
-|	|
-|	+- 01_wav_convert
-|	|
-|	+- ...
-|	|
-|	...
-|
-+- 01_input_files (folder for input files - wav, folker, exmaralda xml exports)
-|	|
-|	+- wav (this folder is for your original wav records)
-|	|
-|	+- folker (this folder is for your folker (*.flk) files in xml format)
-|	|
-|	+- exmaralda (this folder is for your exmaralda (*.exb) files in xml
-|		      format)
-|
-+- 02_generated_files (folder for generated files - wav, sqlite3 database)
-|	|
-|	+- wav (here will be stored the output wav's from
-|		01_wav_convert/remove_non_used_in_wav_all.sh
-|		this script use wav files and folker files from 01_input_files)
-|
+	project (your project root folder - here named project)
+	|
+	+- CorpusAnalyser (this should be this project from github)
+	|	|
+	|	+- 01_wav_convert
+	|	|
+	|	+- ...
+	|	|
+	|	...
+	|
+	+- 01_input_files (folder for input files - wav, folker,
+	|	|	   exmaralda xml exports)
+	|	|
+	|	+- wav (this folder is for your original wav records)
+	|	|
+	|	+- folker (this folder is for your folker (*.flk) files
+	|	|	   in xml format)
+	|	|
+	|	+- exmaralda (this folder is for your exmaralda (*.exb) files
+	|		      in xml format)
+	|
+	+- 02_generated_files (folder for generated files - wav, sqlite3
+	|	|	       database)
+	|	|
+	|	+- wav (here will be stored the output wav's from
+	|		01_wav_convert/remove_non_used_in_wav_all.sh
+	|		this script use wav files and folker files from
+	|		01_input_files)
+	|
 
 
 
