@@ -1,0 +1,73 @@
+-- db_table_structure.sqlite3
+--
+-- Author: Alexander Mack <amack@fiedler-mack.de>
+--
+-- Copyright (C) 2012 Alexander Mack
+--
+-- This is the tablestructure of a sqlite3 database
+-- for a corpus analyser.
+--
+-- This program is free software; you can redistribute it and/or modify
+-- it under the terms of the GNU General Public License as published by
+-- the Free Software Foundation; either version 2, or (at your option)
+-- any later version.
+--
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General Public License for more details.
+--
+-- *******************************************************************
+-- *******************************************************************
+--   Usage:
+--       $ sqlite3 childlangdatabase.db < db_table_structure.sqlite3
+--
+-- *******************************************************************
+-- *******************************************************************
+
+CREATE TABLE sprecher    (id                INTEGER PRIMARY KEY,
+                          name              VARCHAR(30),
+                          kuerzel           VARCHAR(15),
+                          geschlecht        VARCHAR(15),
+                          sprache           VARCHAR(15),
+                          erstsprache       VARCHAR(15),
+                          geburtsdatum      DATE);
+
+-- *******************************************************************
+-- *******************************************************************
+
+CREATE TABLE aufnahme    (id                INTEGER PRIMARY KEY,
+                          sprecher_id       INTEGER,
+                          wavdatei_id       INTEGER,
+                          esb_name          VARCHAR(80),
+                          datum             DATE,
+                          kommentar         VARCHAR(300),
+                          FOREIGN KEY(sprecher_id) REFERENCES sprecher(id),
+                          FOREIGN KEY(wavdatei_id) REFERENCES wavdatei(id));
+
+-- *******************************************************************
+-- *******************************************************************
+
+CREATE TABLE textpostags (id                INTEGER PRIMARY KEY,
+                          aufnahme_id       INTEGER,
+                          wort              VARCHAR(50),
+                          lemma             VARCHAR(50),
+                          postag            VARCHAR(20),
+                          unverstaendlich   BOOL,
+                          tli_start         REAL,
+                          tli_start_intp    BOOL,
+                          tli_end           REAL,
+                          tli_end_intp      BOOL,
+                          vorgaenger_id     INTEGER,
+                          nachfolger_id     INTEGER,
+                          FOREIGN KEY(aufnahme_id) REFERENCES aufnahme(id));
+
+-- *******************************************************************
+-- *******************************************************************
+
+CREATE TABLE wavdatei    (id                INTEGER PRIMARY KEY,
+                          name              VARCHAR(80));
+
+-- *******************************************************************
+-- *******************************************************************
+
