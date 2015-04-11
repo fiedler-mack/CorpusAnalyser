@@ -55,6 +55,7 @@ for d in $DAYMINMAX ; do
 			./db_query_typetoken_lemma_name.sh $DAYMIN $DAYMAX $i \
 					$OUTPUT_DIR/${DAYMIN}_${DAYMAX}/$n $n
 		done
+		rmdir --ignore-fail-on-non-empty $OUTPUT_DIR/${DAYMIN}_${DAYMAX}/$n
 	fi
 done
 done

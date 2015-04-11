@@ -49,6 +49,8 @@ echo -n 'AND textpostags.aufnahme_id = aufnahme.id;' >> query.sql
 cat query.sql | sqlite3 $DB | sort | uniq > \
 		$OUTPUTDIR/output_wortlist_${POSTAG}_${DAYMIN}_${DAYMAX}.txt
 WORTLIST=`cat $OUTPUTDIR/output_wortlist_${POSTAG}_${DAYMIN}_${DAYMAX}.txt`
+CNT=0
+WORDCNTSUM=0
 
 rm -f $OUTPUTDIR/output_typetoken_count_${POSTAG}_${DAYMIN}_${DAYMAX}.csv
 for j in $WORTLIST ; do
@@ -74,9 +76,13 @@ for j in $WORTLIST ; do
 	#cat query2.sql | sqlite3 $DB
 	echo -n "$j|" \
 	>> $OUTPUTDIR/output_typetoken_count_${POSTAG}_${DAYMIN}_${DAYMAX}.csv
-	cat query2.sql | sqlite3 $DB | wc -l \
-	>> $OUTPUTDIR/output_typetoken_count_${POSTAG}_${DAYMIN}_${DAYMAX}.csv
+	WORDCNT=`cat query2.sql | sqlite3 $DB | wc -l`
+	WORDCNTSUM=$((WORDCNTSUM + WORDCNT))
+	CNT=$((CNT + 1))
+	echo $WORDCNT >> $OUTPUTDIR/output_typetoken_count_${POSTAG}_${DAYMIN}_${DAYMAX}.csv
 done
+echo "----|----" >> $OUTPUTDIR/output_typetoken_count_${POSTAG}_${DAYMIN}_${DAYMAX}.csv
+echo "$CNT|$WORDCNTSUM" >> $OUTPUTDIR/output_typetoken_count_${POSTAG}_${DAYMIN}_${DAYMAX}.csv
 
 rm -f query.sql
 rm -f query2.sql

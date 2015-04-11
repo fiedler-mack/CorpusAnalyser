@@ -59,6 +59,7 @@ for d in $DAYMINMAX ; do
 			./db_query_tag_count_name.sh $DAYMIN $DAYMAX $i \
 					$OUTPUT_DIR/${DAYMIN}_${DAYMAX}/$n $n
 		done
+		rmdir --ignore-fail-on-non-empty $OUTPUT_DIR/${DAYMIN}_${DAYMAX}/$n
 	fi
 done
 done

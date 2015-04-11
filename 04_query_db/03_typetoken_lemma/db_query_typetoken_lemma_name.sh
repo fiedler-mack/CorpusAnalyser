@@ -55,6 +55,8 @@ if [ $COUNT -gt 0 ] ; then
 	cat query.sql | sqlite3 $DB | sort | uniq \
 	> $OUTPUTDIR/output_wortlist_${POSTAG}_${DAYMIN}_${DAYMAX}_${NAME}.txt
 	WORTLIST=`cat $OUTPUTDIR/output_wortlist_${POSTAG}_${DAYMIN}_${DAYMAX}_${NAME}.txt`
+	CNT=0
+	WORDCNTSUM=0
 
 	rm -f $OUTPUTDIR/output_typetoken_lemma_${POSTAG}_${DAYMIN}_${DAYMAX}_${NAME}.csv
 	for j in $WORTLIST ; do
@@ -79,9 +81,14 @@ if [ $COUNT -gt 0 ] ; then
 		#cat query2.sql | sqlite3 $DB
 		echo -n "$j|" \
 		>> $OUTPUTDIR/output_typetoken_lemma_${POSTAG}_${DAYMIN}_${DAYMAX}_${NAME}.csv
-		cat query2.sql | sqlite3 $DB | wc -l \
-		>> $OUTPUTDIR/output_typetoken_lemma_${POSTAG}_${DAYMIN}_${DAYMAX}_${NAME}.csv
+		WORDCNT=`cat query2.sql | sqlite3 $DB | wc -l`
+		WORDCNTSUM=$((WORDCNTSUM + WORDCNT))
+		CNT=$((CNT + 1))
+		echo $WORDCNT >> $OUTPUTDIR/output_typetoken_lemma_${POSTAG}_${DAYMIN}_${DAYMAX}_${NAME}.csv
 	done
+	echo "----|----" >> $OUTPUTDIR/output_typetoken_lemma_${POSTAG}_${DAYMIN}_${DAYMAX}_${NAME}.csv
+	echo "$CNT|$WORDCNTSUM" >> $OUTPUTDIR/output_typetoken_lemma_${POSTAG}_${DAYMIN}_${DAYMAX}_${NAME}.csv
+	echo "${POSTAG}|${DAYMIN}|${DAYMAX}|${NAME}|$CNT|$WORDCNTSUM" >> $OUTPUTDIR/../../output_typetoken_lemma_summary.csv
 	#read
 	rm -f query2.sql
 fi

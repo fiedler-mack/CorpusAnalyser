@@ -189,10 +189,26 @@ xxx_all.sh
 
 
 
-6. Generate Tag count results from db:
+6. Generate all results (step 7-10) from db:
+============================================
+
+	This step depends on step 5.
+
+	    $ cd project
+	    $ cd CorpusAnalyser/04_query_db
+	    $ ./db_query_all.sh
+
+	This script will call step 7 to 10 automaticially, it's not necessary
+	to do this manually. All results should be written now - you can stop
+	here.
+
+
+
+7. Generate Tag count results from db:
 ======================================
 
 	This step depends on step 5.
+	This is a substep of db_query_all.sh (step 6).
 
 	    $ cd project
 	    $ cd CorpusAnalyser/04_query_db/01_tag_count
@@ -207,10 +223,11 @@ xxx_all.sh
 
 
 
-7. Typetoken results from db:
+8. Typetoken results from db:
 =============================
 
 	This step depends on step 5.
+	This is a substep of db_query_all.sh (step 6).
 
 	    $ cd project
 	    $ cd CorpusAnalyser/04_query_db/02_typetoken
@@ -218,10 +235,11 @@ xxx_all.sh
 
 
 
-8. Typetoken Lemma results from db:
+9. Typetoken Lemma results from db:
 ===================================
 
 	This step depends on step 5.
+	This is a substep of db_query_all.sh (step 6).
 
 	    $ cd project
 	    $ cd CorpusAnalyser/04_query_db/03_typetoken_lemma
@@ -233,10 +251,11 @@ xxx_all.sh
 
 
 
-9. Lemma Tags results from db:
+10. Lemma Tags results from db:
 ==============================
 
 	This step depends on step 5.
+	This is a substep of db_query_all.sh (step 6).
 
 	    $ cd project
 	    $ cd CorpusAnalyser/04_query_db/04_lemma_tag
