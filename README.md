@@ -196,7 +196,7 @@ xxx_all.sh
 
 	    $ cd project
 	    $ cd CorpusAnalyser/04_query_db
-	    $ ./db_query_all.sh
+	    $ ./query_all.sh
 
 	This script will call step 7 to 10 automaticially, it's not necessary
 	to do this manually. All results should be written now - you can stop
