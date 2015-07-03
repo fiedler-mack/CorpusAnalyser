@@ -95,6 +95,7 @@ struct( Textpostags => [
 		wort => '$',
 		lemma => '$',
 		postag => '$',
+		bedeutung => '$',
 		tli_start => '$',
 		tli_start_intp => '$',
 		tli_end => '$',
@@ -405,6 +406,7 @@ if ($DEBUG >= 1) { print "Aufnahme ID=".$a->id."\n"; }
 my @postag_events;
 my @text_events;
 my @lemma_events;
+my @bedeutung_events;
 
 if ($DEBUG >= 3) { print Data::Dumper->Dump([ $tierformat->{"tier-format"} ])};
 if ($DEBUG >= 3) { print Data::Dumper->Dump([ $bodyref->{tier} ])};
@@ -479,6 +481,25 @@ foreach (@tier) {
 			} else {
 				@lemma_events[0] = $tmp;
 			}
+		} elsif (lc($bodyref->{tier}->{$_->{tierref}}->{type}) eq 'a'
+		    && lc($bodyref->{tier}->{$_->{tierref}}->{category})
+		       eq 'bed'
+		    && $bodyref->{tier}->{$_->{tierref}}->{event} != undef)
+		{
+			# annotation / bedeutung
+			if ($DEBUG >= 3) {
+				print Data::Dumper->Dump(
+					[ $bodyref->{tier}->{$_->{tierref}} ]
+				)
+			};
+			$tmp = $bodyref->{tier}->{$_->{tierref}}->{event};
+			#print "--->a bed   = $tmp\n";
+			if (ref($tmp) eq "ARRAY") {
+				@bedeutung_events = @{$bodyref->{tier}->
+						{$_->{tierref}}->{event}};
+			} else {
+				@bedeutung_events[0] = $tmp;
+			}
 		}
 	}
 }
@@ -489,10 +510,12 @@ foreach (@tier) {
 # go through the two arrays and get the connecting postag <-> text element,
 # write this to db.
 #
-if(@postag_events >= @text_events && @postag_events >= @lemma_events) {
+if(@postag_events >= @text_events && @postag_events >= @lemma_events && @postag_events >= @bedeutung_events) {
 	$cnt = @postag_events;
-} elsif(@lemma_events >= @text_events && @lemma_events >= @postag_events) {
+} elsif(@lemma_events >= @text_events && @lemma_events >= @postag_events && @lemma_events >= @bedeutung_events) {
 	$cnt = @lemma_events;
+} elsif(@bedeutung_events >= @text_events && @bedeutung_events >= @lemma_events && @bedeutung_events >= @postag_events) {
+	$cnt = @bedeutung_events;
 } else {
 	$cnt = @text_events;
 }
@@ -500,12 +523,15 @@ if(@postag_events >= @text_events && @postag_events >= @lemma_events) {
 $i=0;
 $j=0;
 $k=0;
-while($i<($cnt) && $j<($cnt) && $k<($cnt)) {
+$l=0;
+while($i<($cnt) && $j<($cnt) && $k<($cnt) && $l<($cnt)) {
 	#print "text   [$i] ".$text_events[$i]->{start}."\n";
 	#print "postag [$j] ".$postag_events[$j]->{start}."\n";
-	#print "lemma  [$k] ".$lemma_events[$j]->{start}."\n";
+	#print "lemma  [$k] ".$lemma_events[$k]->{start}."\n";
+	#print "bedeutung [$l] ".$bedeutung_events[$l]->{start}."\n";
 	if ($text_events[$i]->{start} eq $postag_events[$j]->{start}
-	    && $lemma_events[$k]->{start} eq $postag_events[$j]->{start}) {
+	    && $lemma_events[$k]->{start} eq $postag_events[$j]->{start}
+	    && $bedeutung_events[$l]->{start} eq $postag_events[$j]->{start}) {
 
 		if ($DEBUG >= 2) { print ". . . . . . . . . . . . . . . . . ".
 			". . . . . . . . . . . . . . . . . . . . . . . . . ."."
@@ -523,6 +549,11 @@ while($i<($cnt) && $j<($cnt) && $k<($cnt)) {
 		if ($DEBUG >= 3) {
 			print Data::Dumper->Dump(
 				[ $lemma_events[$k]->{content} ]
+			)
+		};
+		if ($DEBUG >= 3) {
+			print Data::Dumper->Dump(
+				[ $bedeutung_events[$l]->{content} ]
 			)
 		};
 		if ($DEBUG >= 3) {
@@ -573,6 +604,9 @@ while($i<($cnt) && $j<($cnt) && $k<($cnt)) {
 		$t->postag(stringRemSpc($postag_events[$j]->{content}));
 		if ($DEBUG >= 2) { print "textpostags.postag = ".$t->postag."\n"};
 
+		$t->bedeutung(stringRemSpc($bedeutung_events[$l]->{content}));
+		if ($DEBUG >= 2) { print "textpostags.bedeutung = ".$t->bedeutung."\n"};
+
 		$t->tli_start(stringCorr(
 			$bodyref->{"common-timeline"}->{tli}->
 				{$text_events[$i]->{start}}->{time}));
@@ -614,7 +648,8 @@ while($i<($cnt) && $j<($cnt) && $k<($cnt)) {
 
 		if ($DEBUG == 0) {
 			print "($i/".($cnt-1).") ".$t->wort." ".
-						$t->postag."         \r";
+						$t->postag." ".
+						$t->bedeutung."      \r";
 		};
 
 
@@ -641,6 +676,7 @@ while($i<($cnt) && $j<($cnt) && $k<($cnt)) {
 					AND wort = '".$t->wort."'
 					AND lemma = '".$t->lemma."'
 					AND postag = '".$t->postag."'
+					AND bedeutung = '".$t->bedeutung."'
 					AND unverstaendlich =
 						'".$t->unverstaendlich."'
 					AND tli_start = '".$t->tli_start."'
@@ -658,6 +694,7 @@ while($i<($cnt) && $j<($cnt) && $k<($cnt)) {
 						wort,
 						lemma,
 						postag,
+						bedeutung,
 						unverstaendlich,
 						tli_start,
 						tli_start_intp,
@@ -671,6 +708,7 @@ while($i<($cnt) && $j<($cnt) && $k<($cnt)) {
 						'".$t->wort."',
 						'".$t->lemma."',
 						'".$t->postag."',
+						'".$t->bedeutung."',
 						'".$t->unverstaendlich."',
 						'".$t->tli_start."',
 						'".$t->tli_start_intp."',
@@ -681,13 +719,13 @@ while($i<($cnt) && $j<($cnt) && $k<($cnt)) {
 						)"
 				);
 			if ($DEBUG >= 1) {
-				print "TextPosTag ".$t->wort." / ".$t->postag.
+				print "TextPosTag ".$t->wort." / ".$t->postag." / ".$t->bedeutung.
 					" / ".$t->lemma.", created in DB\n";
 			}
 		} else {
 			if ($DEBUG >= 1) {
 				print "ignore TextPosTag ".$t->wort." / ".
-				$t->postag." / ".$t->lemma.
+				$t->postag." / ".$t->bedeutung." / ".$t->lemma.
 				", already exist in DB\n";
 			}
 		}
@@ -700,6 +738,7 @@ while($i<($cnt) && $j<($cnt) && $k<($cnt)) {
 						AND wort = '".$t->wort."'
 						AND lemma = '".$t->lemma."'
 						AND postag = '".$t->postag."'
+						AND bedeutung = '".$t->bedeutung."'
 						AND tli_start =
 							'".$t->tli_start."'
 						AND tli_end = '".$t->tli_end."'
@@ -720,6 +759,7 @@ while($i<($cnt) && $j<($cnt) && $k<($cnt)) {
 		$i++;
 		$j++;
 		$k++;
+		$l++;
 
 	} else {
 		print "ERROR: time-start of postag, wort and lemma differ ".
@@ -730,6 +770,8 @@ while($i<($cnt) && $j<($cnt) && $k<($cnt)) {
 			" - ".stringRemSpc($postag_events[$j]->{content})."\n";
 		print "       lemma  [$k] ".$lemma_events[$j]->{start}.
 			" - ".stringRemSpc($lemma_events[$k]->{content})."\n";
+		print "       bedeutung [$l] ".$bedeutung_events[$l]->{start}.
+			" - ".stringRemSpc($bedeutung_events[$l]->{content})."\n";
 		exit -2;
 	}
 
