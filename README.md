@@ -49,9 +49,14 @@ xxx_all.sh
 	|	|
 	|	+- 01_wav_convert
 	|	|
-	|	+- ...
+	|	+- 02_create_db
 	|	|
-	|	...
+	|	+- 03_import_data
+	|	|
+	|	+- 04_query_db
+	|	|
+	|	LICENSE
+	|	README.md (this file)
 	|
 	+- 01_input_files (folder for input files - wav, folker,
 	|	|	   exmaralda xml exports)
@@ -72,7 +77,8 @@ xxx_all.sh
 	|		this script use wav files and folker files from
 	|		01_input_files)
 	|
-
+	+- 03_db_query_results (folder for query results from database)
+	|
 
 
 1. Installation / Preparation:
@@ -80,7 +86,7 @@ xxx_all.sh
 
 	1.1 create above folder structure
 
-	1.2 move this project folder in the root of your project
+	1.2 move this project folder "CorpusAnalyser" in the root of your project, see above.
 
 
 
@@ -198,9 +204,10 @@ xxx_all.sh
 	    $ cd CorpusAnalyser/04_query_db
 	    $ ./query_all.sh
 
-	This script will call step 7 to 10 automaticially, it's not necessary
+	This script will call step 7 to 12 automaticially, it's not necessary
 	to do this manually. All results should be written now - you can stop
 	here.
+	The results are written to subfolder under 03_db_query_results.
 
 
 
@@ -252,7 +259,7 @@ xxx_all.sh
 
 
 10. Lemma Tags results from db:
-==============================
+===============================
 
 	This step depends on step 5.
 	This is a substep of db_query_all.sh (step 6).
@@ -265,5 +272,28 @@ xxx_all.sh
 
 	    $ ./db_query_all_lemma_tag_name.sh
 
+
+
+11. Lemma Bedeutung Tags results from db:
+=========================================
+
+	This step depends on step 5.
+	This is a substep of db_query_all.sh (step 6).
+
+	    $ cd project
+	    $ cd CorpusAnalyser/04_query_db/05_lemma_bedeutung
+	    $ ./db_query_all_lemma_bedeutung.sh
+
+
+
+12. Typetoken Bedeutung Tags results from db:
+=============================================
+
+	This step depends on step 5.
+	This is a substep of db_query_all.sh (step 6).
+
+	    $ cd project
+	    $ cd CorpusAnalyser/04_query_db/06_typetoken_bedeutung
+	    $ ./db_query_all_typetoken_bedeutung.sh
 
 

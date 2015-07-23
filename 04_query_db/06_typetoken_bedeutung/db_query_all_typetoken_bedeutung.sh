@@ -1,16 +1,16 @@
 #!/bin/bash
 
-# db_query_all_lemma_bedeutung.sh
+# db_query_all_typetoken_bedeutung.sh
 #
-# Query lemma bedeutung between timestamps to the sqlite3 database
+# Query typetoken between timestamps to the sqlite3 database
 # Write the results to a csv file.
 #
 # Author: Alexander Mack <amack@fiedler-mack.de>
 #
-# Copyright (C) 2015 Alexander Mack
+# Copyright (C) 2012 Alexander Mack
 #
 # The query of the database will doing by the subscript
-# db_query_lemma_bedeutung.sh.
+# db_query_typetoken_lemma.sh.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,8 +40,7 @@ BEDEUTUNG="$BEDEUTUNG sub-kaus sub-kond sub-konz sub-mod-instr sub-neutr sub-tem
 BEDEUTUNG="$BEDEUTUNG v-aux v-kop v-mod"
 BEDEUTUNG="$BEDEUTUNG vorgang xy zustand"
 
-
-OUTPUT_DIR=../../../03_db_query_results/lemma_bedeutung
+OUTPUT_DIR=../../../03_db_query_results/typetoken_bedeutung
 
 for d in $DAYMINMAX ; do
 	if [[ $d =~ ^(.*):(.*)$ ]]; then
@@ -61,7 +60,7 @@ for d in $DAYMINMAX ; do
 				mkdir -p $OUTPUT_DIR/${DAYMIN}_${DAYMAX}
 			fi
 			echo $DAYMIN $DAYMAX $i $OUTPUT_DIR/${DAYMIN}_${DAYMAX}
-			./db_query_lemma_bedeutung.sh $DAYMIN $DAYMAX $i \
+			./db_query_typetoken_bedeutung.sh $DAYMIN $DAYMAX $i \
 						$OUTPUT_DIR/${DAYMIN}_${DAYMAX}
 		done
 	fi

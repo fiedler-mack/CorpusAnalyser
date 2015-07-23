@@ -23,10 +23,17 @@
 # GNU General Public License for more details.
 
 DAYMINMAX="1281:1495 1496:1708 1709:1983"
+# single queries
 POSTAGS="ADJA ADJD ADV APPR APPRART ART CARD FM ITJ KOKOM KON KOUS NE NN PAV"
 POSTAGS="$POSTAGS PDAT PDS PIAT PIDAT PIS PPER PPOSAT PPOSS PRELAT PRELS PRF"
 POSTAGS="$POSTAGS PTKA PTKANT PTKNEG PTKVZ PTKZU PWAT PWAV PWS VAFIN VAIMP"
 POSTAGS="$POSTAGS VAINF VAPP VMFIN VMINF VMPP VVFIN VVIMP VVINF VVIZU VVPP XY"
+# multi queries
+POSTAGS="$POSTAGS ADJA+ADJD ADV+PAV APPR+APPRART KOKOM+KON+KOUS NE+NN"
+POSTAGS="$POSTAGS PDS+PIAT+PIDAT+PIS PPOSAT+PPOSS PRELS+PRF"
+POSTAGS="$POSTAGS PTKA+PTKANT+PTKNEG+PTKVZ+PTKZU PWAT+PWAV+PWS VAFIN+VAIMP"
+POSTAGS="$POSTAGS VAINF+VAPP+VMFIN+VMINF+VMPP+VVFIN+VVIMP+VVINF+VVIZU+VVPP"
+#PDAT ? PRELAT ?
 
 OUTPUT_DIR=../../../03_db_query_results/typetoken_lemma
 
@@ -35,21 +42,52 @@ for d in $DAYMINMAX ; do
 		DAYMIN=`echo ${BASH_REMATCH[1]}`
 		DAYMAX=`echo ${BASH_REMATCH[2]}`
 
+		rm -f $OUTPUT_DIR/output_typetoken_lemma_summary_${DAYMIN}_${DAYMAX}.csv
+
 		for i in $POSTAGS ; do
 			#echo -n "============================================="
 			#echo "==============================="
 			if [ ! -e $OUTPUT_DIR/${DAYMIN}_${DAYMAX} ] ; then
-				#echo -n "directory "
-				#echo -n "$OUTPUT_DIR/${DAYMIN}_${DAYMAX} "
-				#echo "not exist."
-				#echo -n "Press enter to create directory or "
-				#echo "ctrl-c to abort"
-				#read
 				mkdir -p $OUTPUT_DIR/${DAYMIN}_${DAYMAX}
 			fi
-			echo $DAYMIN $DAYMAX $i $OUTPUT_DIR/${DAYMIN}_${DAYMAX}
+			echo -n $DAYMIN $DAYMAX $i $OUTPUT_DIR/${DAYMIN}_${DAYMAX}
 			./db_query_typetoken_lemma.sh $DAYMIN $DAYMAX $i \
 						$OUTPUT_DIR/${DAYMIN}_${DAYMAX}
 		done
+
+		# calculate counts / percentage
+		CNTSUM=0
+		WORDCNTSUM=0
+		if [ -f $OUTPUT_DIR/output_typetoken_lemma_summary_${DAYMIN}_${DAYMAX}.csv ] ; then
+			FILE=`cat $OUTPUT_DIR/output_typetoken_lemma_summary_${DAYMIN}_${DAYMAX}.csv`
+			for i in $FILE ; do
+				if [[ $i =~ ^(.*)\|.*\|.*\|.*\|(.*)\|(.*)$ ]]; then
+					TAG=`echo ${BASH_REMATCH[1]}`
+					CNT=`echo ${BASH_REMATCH[2]}`
+					WORDCNT=`echo ${BASH_REMATCH[3]}`
+					if ! [[ $TAG =~ .*\+.* ]] ; then
+						# count only single quieries
+						CNTSUM=$((CNTSUM + CNT))
+						WORDCNTSUM=$((WORDCNTSUM + WORDCNT))
+					fi
+				fi
+			done
+			if [ $CNTSUM -gt 0 ] && [ $WORDCNTSUM -gt 0 ] ; then
+				FILE=`cat $OUTPUT_DIR/output_typetoken_lemma_summary_${DAYMIN}_${DAYMAX}.csv`
+				rm -f $OUTPUT_DIR/output_typetoken_lemma_summary_${DAYMIN}_${DAYMAX}.csv.tmp
+				for i in $FILE ; do
+					if [[ $i =~ ^.*\|.*\|.*\|.*\|(.*)\|(.*)$ ]]; then
+						CNT=`echo ${BASH_REMATCH[1]}`
+						WORDCNT=`echo ${BASH_REMATCH[2]}`
+						WORDPERCENT=`echo "scale=5; $WORDCNT*100/$WORDCNTSUM" | bc | sed -e "s/\./,/g"`
+						CNTPERCENT=`echo "scale=5; $CNT*100/$CNTSUM" | bc | sed -e "s/\./,/g"`
+						echo "${i}|${CNTPERCENT}|${WORDPERCENT}" >> $OUTPUT_DIR/output_typetoken_lemma_summary_${DAYMIN}_${DAYMAX}.csv.tmp
+					fi
+				done
+				echo "----|----|----|----|----|----|----|----" >> $OUTPUT_DIR/output_typetoken_lemma_summary_${DAYMIN}_${DAYMAX}.csv.tmp
+				echo "||||${CNTSUM}|${WORDCNTSUM}|100,00000|100,00000" >> $OUTPUT_DIR/output_typetoken_lemma_summary_${DAYMIN}_${DAYMAX}.csv.tmp
+				mv $OUTPUT_DIR/output_typetoken_lemma_summary_${DAYMIN}_${DAYMAX}.csv.tmp $OUTPUT_DIR/output_typetoken_lemma_summary_${DAYMIN}_${DAYMAX}.csv
+			fi
+		fi
 	fi
 done
