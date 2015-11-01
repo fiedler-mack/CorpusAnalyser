@@ -195,7 +195,7 @@ xxx_all.sh
 
 
 
-6. Generate all results (step 7-10) from db:
+6. Generate all results (step 7-12) from db:
 ============================================
 
 	This step depends on step 5.

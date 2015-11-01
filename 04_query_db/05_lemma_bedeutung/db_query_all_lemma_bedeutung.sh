@@ -22,16 +22,15 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-#DAYMINMAX="1281:1495 1496:1708 1709:1983 1281:9999"
-DAYMINMAX="1281:9999"
+DAYMINMAX="1281:1495 1496:1708 1709:1983"
 BEDEUTUNG="ad-part ad-qual ad-quant ad-rel"
-BEDEUTUNG="$BEDEUTUNG adv-rel adv-kaus adv-komm adv-lok"
+BEDEUTUNG="$BEDEUTUNG adv-kaus adv-komm adv-lok"
 BEDEUTUNG="$BEDEUTUNG adv-mod adv-temp art fm handlung"
 BEDEUTUNG="$BEDEUTUNG itj kon-add kon-adv kon-alt kon-ass kon-kaus kon-spez"
-BEDEUTUNG="$BEDEUTUNG kon-temp kon-vgl kous-kond n-abstr-hdlg n-abstr-maß"
+BEDEUTUNG="$BEDEUTUNG kon-temp kon-vgl n-abstr-hdlg n-abstr-maß"
 BEDEUTUNG="$BEDEUTUNG n-abstr-vorg n-abstr-vorst n-abstr-wiss n-abstr-zeit"
 BEDEUTUNG="$BEDEUTUNG n-abstr-zust n-abstr-eig n-belebt ne"
-BEDEUTUNG="$BEDEUTUNG n-unbelebt pav pds"
+BEDEUTUNG="$BEDEUTUNG n-unbelebt pav pdat pds"
 BEDEUTUNG="$BEDEUTUNG piat pidat pis pper ppos"
 BEDEUTUNG="$BEDEUTUNG prels prf pr-kaus pr-lok pr-mod pr-neutr pr-temp"
 BEDEUTUNG="$BEDEUTUNG ptk-abt ptk-ant ptk-fok ptk-gespr"
